@@ -100,13 +100,15 @@
   @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .video-card { position: relative; overflow: hidden; cursor: pointer; }
-  .video-card video { transition: transform 0.7s cubic-bezier(0.4,0,0.2,1), filter 0.7s ease; filter: grayscale(100%); will-change: transform; }
-  .video-card:hover video { transform: scale(1.05); filter: grayscale(0%); }
+  .video-card video { transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+  .video-card:hover video { transform: scale(1.05); }
   .video-card .video-overlay { transition: opacity 0.5s ease, background-color 0.5s ease; }
   .video-card:hover .video-overlay { opacity: 0; }
   .video-card .video-info { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease; }
-  .lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+  .lightbox { position: fixed; inset: 0; z-index: 200; background: #000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
   .lightbox.active { opacity: 1; pointer-events: all; }
+  .lightbox.active * { animation-play-state: paused !important; }
+  .lightbox.active video { animation-play-state: running !important; }
   .lightbox-content { transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
   .lightbox.active .lightbox-content { transform: scale(1); }
   .service-card { transition: all 0.5s cubic-bezier(0.4,0,0.2,1); }
@@ -137,11 +139,22 @@
   /* Video performance optimizations */
   video { will-change: transform; transform: translateZ(0); }
   .hero-video-container video { will-change: transform; }
+
+  /* Force hardware acceleration for smooth video */
+  #lightbox-video { 
+    transform: translateZ(0); 
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  /* Lightbox loading spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .animate-spin { animation: spin 1s linear infinite; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"InteriorDesigner","name":"Aashiyana Decor","image":"https://aashiyanadecor.com/logo.jpg","@id":"https://aashiyanadecor.com","url":"https://aashiyanadecor.com","telephone":"+91-8077913649","priceRange":"$$$","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"55"},"address":{"@type":"PostalAddress","streetAddress":"K-61, near 90 Degree Salon, Christian Ganj","addressLocality":"Vaishali Nagar","addressRegion":"Rajasthan","postalCode":"305001","addressCountry":"IN"},"geo":{"@type":"GeoCoordinates","latitude":26.4499,"longitude":74.6399},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:00","closes":"19:00"}],"sameAs":["https://www.facebook.com/aashiyanadecor","https://www.instagram.com/aashiyanadecor","https://wa.me/918077913649"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Interior Design Services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Kitchen Design"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Bathroom Design"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"False Ceiling & Wooden Flooring"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Space Planning"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Interior Decorating"}}]},"areaServed":{"@type":"City","name":"Ajmer","containedInPlace":{"@type":"State","name":"Rajasthan"}}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://aashiyanadecor.com"},{"@type":"ListItem","position":2,"name":"Services","item":"https://aashiyanadecor.com/services"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What services does Aashiyana Decor offer in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Aashiyana Decor offers comprehensive interior design services in Ajmer including kitchen design, bathroom design, bedroom design, false ceiling, wooden flooring, space planning, lighting design, cabinetry design, and complete home renovation."}},{"@type":"Question","name":"Where is Aashiyana Decor located in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Aashiyana Decor is located at K-61, near 90 Degree Salon, Christian Ganj, Vaishali Nagar, Ajmer, Rajasthan 305001. We are open Monday to Saturday from 9 AM to 7 PM."}},{"@type":"Question","name":"How much does interior design cost in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Interior design costs in Ajmer vary based on project scope. Aashiyana Decor provides transparent pricing with detailed estimates. Contact us for a free consultation and quote tailored to your budget and requirements."}}]}</script>
 <!-- base target removed to allow internal anchor navigation -->
+<base target="_blank">
 </head>
 <body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
 <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
@@ -486,8 +499,11 @@
     <span class="material-symbols-outlined text-2xl">close</span>
   </button>
   <div class="lightbox-content w-full max-w-5xl mx-4 sm:mx-8">
-    <div class="relative rounded-xl overflow-hidden bg-black shadow-2xl">
-      <video id="lightbox-video" class="w-full aspect-video" controls playsinline preload="auto">
+    <div class="relative rounded-xl overflow-hidden bg-black shadow-2xl" style="max-height: 80vh; width: 100%;">
+      <video id="lightbox-video" 
+             autoplay muted loop playsinline preload="auto"
+             class="w-full h-full object-cover"
+             style="max-height: 80vh;">
         <source id="lightbox-source" src="" type="video/mp4">
       </video>
     </div>
@@ -1370,6 +1386,8 @@
 (function() {
   'use strict';
 
+
+
   // Mobile Navigation
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileCloseBtn = document.getElementById('mobile-close-btn');
@@ -1540,47 +1558,23 @@
   function openLightbox(videoSrc, title, location) {
     if (!videoSrc) return;
 
-    // Reset video first
+    // Reset and set source (like hero video)
     lightboxVideo.pause();
     lightboxVideo.currentTime = 0;
-
-    // For local files, use exact filename as-is (don't URL encode)
-    // Browser handles file:// paths with spaces correctly
-    let processedSrc = videoSrc;
-
-    // Set the source - use the source element for better compatibility
-    const sourceEl = lightboxVideo.querySelector('source');
-    if (sourceEl) {
-      sourceEl.src = processedSrc;
-    } else {
-      lightboxVideo.src = processedSrc;
-    }
-
-    // Load the video
-    lightboxVideo.load();
+    lightboxVideo.src = videoSrc;
 
     lightboxTitle.textContent = title || '';
     lightboxLocation.textContent = location || '';
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Try to play after a short delay to ensure video is loaded
-    setTimeout(() => {
-      lightboxVideo.play().catch(err => {
-        console.log('Video play failed:', err);
-        // If autoplay blocked, show controls so user can manually play
-        lightboxVideo.controls = true;
-      });
-    }, 500);
+    // Let autoplay handle it - just like hero video!
+    // No complex event listeners needed
   }
   function closeLightbox() {
     lightbox.classList.remove('active');
     lightboxVideo.pause();
-    lightboxVideo.currentTime = 0;
-    const sourceEl = lightboxVideo.querySelector('source');
-    if (sourceEl) sourceEl.src = '';
     lightboxVideo.src = '';
-    lightboxVideo.load();
     document.body.style.overflow = '';
   }
 
