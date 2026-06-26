@@ -117,6 +117,7 @@
   .mobile-nav.open { transform: translateX(0); }
   .hero-video-container { position: absolute; inset: 0; overflow: hidden; }
   .hero-video-container video { width: 100%; height: 100%; object-fit: cover; }
+  .hero-video-container::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(144,67,29,0.15) 0%, transparent 50%, rgba(107,91,82,0.1) 100%); pointer-events: none; z-index: 5; }
   .testimonial-card { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
   .testimonial-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(107,91,82,0.15); }
   .process-step { transition: all 0.4s ease; }
@@ -132,12 +133,15 @@
   ::-webkit-scrollbar-track { background: #f6f3f2; }
   ::-webkit-scrollbar-thumb { background: #dbc1b7; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #90431d; }
+
+  /* Video performance optimizations */
+  video { will-change: transform; transform: translateZ(0); }
+  .hero-video-container video { will-change: transform; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"InteriorDesigner","name":"Aashiyana Decor","image":"https://aashiyanadecor.com/logo.jpg","@id":"https://aashiyanadecor.com","url":"https://aashiyanadecor.com","telephone":"+91-8077913649","priceRange":"$$$","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"55"},"address":{"@type":"PostalAddress","streetAddress":"K-61, near 90 Degree Salon, Christian Ganj","addressLocality":"Vaishali Nagar","addressRegion":"Rajasthan","postalCode":"305001","addressCountry":"IN"},"geo":{"@type":"GeoCoordinates","latitude":26.4499,"longitude":74.6399},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:00","closes":"19:00"}],"sameAs":["https://www.facebook.com/aashiyanadecor","https://www.instagram.com/aashiyanadecor","https://wa.me/918077913649"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Interior Design Services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Kitchen Design"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Bathroom Design"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"False Ceiling & Wooden Flooring"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Space Planning"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Interior Decorating"}}]},"areaServed":{"@type":"City","name":"Ajmer","containedInPlace":{"@type":"State","name":"Rajasthan"}}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://aashiyanadecor.com"},{"@type":"ListItem","position":2,"name":"Services","item":"https://aashiyanadecor.com/services"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What services does Aashiyana Decor offer in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Aashiyana Decor offers comprehensive interior design services in Ajmer including kitchen design, bathroom design, bedroom design, false ceiling, wooden flooring, space planning, lighting design, cabinetry design, and complete home renovation."}},{"@type":"Question","name":"Where is Aashiyana Decor located in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Aashiyana Decor is located at K-61, near 90 Degree Salon, Christian Ganj, Vaishali Nagar, Ajmer, Rajasthan 305001. We are open Monday to Saturday from 9 AM to 7 PM."}},{"@type":"Question","name":"How much does interior design cost in Ajmer?","acceptedAnswer":{"@type":"Answer","text":"Interior design costs in Ajmer vary based on project scope. Aashiyana Decor provides transparent pricing with detailed estimates. Contact us for a free consultation and quote tailored to your budget and requirements."}}]}</script>
-<!-- Removed base target to enable standard same-tab internal navigation -->
-<base target="_blank">
+<!-- base target removed to allow internal anchor navigation -->
 </head>
 <body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
 <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-on-primary focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
@@ -210,26 +214,18 @@
 <!-- HERO SECTION -->
 <section class="relative min-h-[90vh] sm:min-h-[795px] flex items-center overflow-hidden" aria-label="Hero section">
   <div class="hero-video-container z-0">
-    <div class="absolute inset-0 bg-background/20 z-10"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
-    <video id="hero-video" autoplay muted loop playsinline preload="none" 
-           poster="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1920&amp;q=80" 
-           class="w-full h-full object-cover" 
-           aria-hidden="true">
-      <source src="https://videos.pexels.com/video-files/7578547/7578547-hd_1280_720_25fps.mp4" type="video/mp4">
+    <div class="absolute inset-0 bg-background/30 z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-background/20 via-transparent to-background/20 z-10"></div>
+    <video id="hero-video" autoplay muted loop playsinline preload="auto" 
+           poster="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80" 
+           class="w-full h-full object-cover scale-105" 
+           style="filter: brightness(0.9) contrast(1.1);"
+           aria-hidden="true"
+           disablePictureInPicture
+           disableRemotePlayback>
+      <source src="0622.mp4" type="video/mp4">
     </video>
-  </div>
-  <div class="relative z-20 max-w-container-max mx-auto px-4 sm:px-6 lg:px-margin w-full">
-    <div class="max-w-2xl mx-auto flex flex-col items-center justify-center text-center">
-      <div class="flex flex-col sm:flex-row gap-4 opacity-0 animate-[slideUp_1s_ease-out_0.6s_forwards] justify-center">
-        <a href="https://wa.me/918077913649" target="_blank" rel="noopener noreferrer" class="btn-premium bg-primary hover:bg-primary-container text-on-primary px-8 py-4 rounded-lg font-label-md shadow-lg text-center min-h-[52px] flex items-center justify-center gap-2 touch-manipulation">
-          <span class="material-symbols-outlined">chat</span> Get Free Consultation
-        </a>
-        <a href="#projects" class="flex items-center justify-center gap-2 px-8 py-4 bg-surface-container-lowest/90 backdrop-blur-sm text-secondary border border-outline/20 hover:border-primary hover:text-primary rounded-lg font-label-md transition-all min-h-[52px] touch-manipulation">
-          <span class="material-symbols-outlined">play_circle</span> View Our Projects
-        </a>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -428,9 +424,9 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
       <!-- Video Card 1 -->
-      <div class="video-card group relative overflow-hidden rounded-xl h-80 sm:h-96 cursor-pointer shadow-lg" data-video-src"MASTERBEDROOM.MP4 data-title="Modern Kitchen Transformation" data-location="Vaishali Nagar, Ajmer" role="button" tabindex="0" aria-label="Watch Modern Kitchen Transformation video">
-        <video class="absolute inset-0 w-full h-full object-cover" muted loop playsinline preload="none" poster="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&amp;q=80">
-          <source src="MASTERBEDROOM.MP4" type="video/mp4">
+      <div class="video-card group relative overflow-hidden rounded-xl h-80 sm:h-96 cursor-pointer shadow-lg" data-video-src="MASTERBEDROOM.mp4" data-title="Master Bedroom Renovation" data-location="Vaishali Nagar, Ajmer" role="button" tabindex="0" aria-label="Watch Master Bedroom Renovation video">
+        <video class="absolute inset-0 w-full h-full object-cover" muted loop playsinline preload="metadata" poster="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80">
+          <source src="MASTERBEDROOM.mp4" type="video/mp4">
         </video>
         <div class="video-overlay absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors duration-500"></div>
         <div class="absolute inset-0 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
@@ -491,8 +487,8 @@
   </button>
   <div class="lightbox-content w-full max-w-5xl mx-4 sm:mx-8">
     <div class="relative rounded-xl overflow-hidden bg-black shadow-2xl">
-      <video id="lightbox-video" class="w-full aspect-video" controls playsinline>
-        <source src="" type="video/mp4">
+      <video id="lightbox-video" class="w-full aspect-video" controls playsinline preload="auto">
+        <source id="lightbox-source" src="" type="video/mp4">
       </video>
     </div>
     <div class="mt-4 text-center">
@@ -1510,13 +1506,17 @@
       if (!video) return;
       let playTimeout;
       card.addEventListener('mouseenter', () => {
-        playTimeout = setTimeout(() => { video.play().catch(() => {}); }, 200);
+        playTimeout = setTimeout(() => { 
+          video.play().catch(err => {
+            console.log('Video play failed:', err.name, err.message);
+          }); 
+        }, 200);
       });
       card.addEventListener('mouseleave', () => {
         clearTimeout(playTimeout);
         video.pause(); video.currentTime = 0;
       });
-      card.addEventListener('touchstart', () => { video.play().catch(() => {}); }, { passive: true });
+      card.addEventListener('touchstart', () => { video.play().catch(err => console.log('Touch play failed:', err.name)); }, { passive: true });
 
       card.addEventListener('click', () => {
         openLightbox(card.dataset.videoSrc, card.dataset.title, card.dataset.location);
@@ -1539,18 +1539,48 @@
 
   function openLightbox(videoSrc, title, location) {
     if (!videoSrc) return;
-    lightboxVideo.src = videoSrc;
+
+    // Reset video first
+    lightboxVideo.pause();
+    lightboxVideo.currentTime = 0;
+
+    // For local files, use exact filename as-is (don't URL encode)
+    // Browser handles file:// paths with spaces correctly
+    let processedSrc = videoSrc;
+
+    // Set the source - use the source element for better compatibility
+    const sourceEl = lightboxVideo.querySelector('source');
+    if (sourceEl) {
+      sourceEl.src = processedSrc;
+    } else {
+      lightboxVideo.src = processedSrc;
+    }
+
+    // Load the video
+    lightboxVideo.load();
+
     lightboxTitle.textContent = title || '';
     lightboxLocation.textContent = location || '';
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
-    lightboxVideo.play().catch(() => {});
+
+    // Try to play after a short delay to ensure video is loaded
+    setTimeout(() => {
+      lightboxVideo.play().catch(err => {
+        console.log('Video play failed:', err);
+        // If autoplay blocked, show controls so user can manually play
+        lightboxVideo.controls = true;
+      });
+    }, 500);
   }
   function closeLightbox() {
     lightbox.classList.remove('active');
     lightboxVideo.pause();
     lightboxVideo.currentTime = 0;
+    const sourceEl = lightboxVideo.querySelector('source');
+    if (sourceEl) sourceEl.src = '';
     lightboxVideo.src = '';
+    lightboxVideo.load();
     document.body.style.overflow = '';
   }
 
@@ -1563,20 +1593,43 @@
   // Call setup for video cards
   setupVideoCards();
 
+  // Re-setup video cards when SPA view changes
+  window.addEventListener('hashchange', () => {
+    setTimeout(setupVideoCards, 300);
+  });
+
   // Hero Video Lazy Loading
-  // Hero video lazy play via IntersectionObserver
+  // Hero video — attractive autoplay with retry
   const heroVideo = document.getElementById('hero-video');
   if (heroVideo) {
+    // Immediate play attempt
+    const tryPlay = () => {
+      heroVideo.play().catch(err => {
+        if (err.name === 'NotAllowedError') {
+          // Autoplay blocked — wait for user interaction
+          document.addEventListener('click', () => heroVideo.play(), { once: true });
+          document.addEventListener('scroll', () => heroVideo.play(), { once: true });
+        }
+      });
+    };
+
+    // Try on load
+    if (heroVideo.readyState >= 2) {
+      tryPlay();
+    } else {
+      heroVideo.addEventListener('loadedmetadata', tryPlay, { once: true });
+    }
+
+    // Lazy play via IntersectionObserver as backup
     const heroObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          heroVideo.play().catch(() => {});
+          tryPlay();
           heroObserver.unobserve(heroVideo);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05 });
     heroObserver.observe(heroVideo);
-  }
   }
 
   // Smooth Scroll for standard internal anchors
